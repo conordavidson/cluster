@@ -1,0 +1,98 @@
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: #f1f3f5;
+  color: #345;
+  font-family: monospace;
+}
+
+ul, li{
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+main {
+  width: 100%;
+  height: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 100px 60px 60px 60px;
+}
+
+.panel {
+  box-shadow: 0 6px 8px rgba(102,119,136,0.03), 0 1px 2px rgba(102,119,136,0.3);
+  background-color: white;
+  border-radius: 2px;
+  line-height: 30px;
+  padding: 5px;
+}
+
+.panel-heading, .panel-content, .panel-content * {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.panel-heading {
+  border-right: 1px solid grey;
+  padding: 0 10px;
+  font-weight: 700;
+}
+
+.panel-content li{
+  border-right: 1px solid grey;
+  padding: 0 10px;
+}
+
+#controls {
+  position: fixed;
+  width: 100%;
+  z-index: 100;
+}
+
+#cluster {
+  position: relative;
+  height: 100%;
+  border-radius: 50%;
+  border: 1px dotted grey;
+}
+
+.nodes {
+  width: 100%;
+  height: 100%;
+}
+
+.central-node, .node {
+  border-radius: 50%;
+  box-shadow: 0 6px 8px rgba(102,119,136,0.03), 0 1px 2px rgba(102,119,136,0.3);
+  position: absolute;
+}
+
+.central-node {
+  background-color: white;
+  width: 100px;
+  height: 100px;
+  top: calc(50% - 50px);
+  left: calc(50% - 50px);
+}
+
+.node {
+  width: 50px;
+  height: 50px;
+  top: calc(0% - 25px);
+  left: calc(50% - 25px);
+  transform-origin: inherit;
+  text-align: center;
+}
+
+.node .label {
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+}
