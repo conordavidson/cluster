@@ -23,7 +23,7 @@ function Cluster(){
   }
 
   let _balanceNodes = () => {
-    nodes.map((node, index) => {
+    nodes.forEach((node, index) => {
       node.revolve((360 / nodes.length) * (index));
     })
   }
@@ -50,48 +50,26 @@ function Cluster(){
   }
 
   let _INITIALIZE = (() => {
-    let cluster = document.createElement('section');
-    cluster.className = 'cluster';
 
-    let nodeControls = document.createElement('div');
-    nodeControls.className = 'node-controls';
+    let cluster = $('<section />', { "class": 'cluster' })[0];
+    let nodeControls = $('<div />', { "class": 'node-controls' })[0];
+    let add = $('<div />', { "class": 'add-node node-control', click: () => _addNode() })[0];
+    let subtract = $('<div />', { "class": 'subtract-node node-control', click: () => _subtractNode() })[0];
 
-    let add = document.createElement('div');
-    add.className = 'add-node node-control';
-    add.onclick = () => _addNode();
+    let rotateCC = $('<div />', { "class": 'rotate-node-cc node-control' })[0];
+    $(rotateCC).on('mousedown touchstart', () => _startRotation('cc'));
+    $(rotateCC).on('mouseup mouseout touchend', () => _clearRotation());
 
-    let subtract = document.createElement('div');
-    subtract.className = 'subtract-node node-control';
-    subtract.onclick = () => _subtractNode();
+    let rotateCW = $('<div />', { "class": 'rotate-node-cw node-control' })[0];
+    $(rotateCW).on('mousedown touchstart', () => _startRotation('cw'));
+    $(rotateCW).on('mouseup mouseout touchend', () => _clearRotation());
 
-    let rotateCC = document.createElement('div');
-    rotateCC.className = 'rotate-node-cc node-control';
-    $(rotateCC).on('mousedown touchstart',
-      () => _startRotation('cc'));
-    $(rotateCC).on('mouseup mouseout touchend',
-      () => _clearRotation());
+    let nodes = $('<div />', { "class": 'nodes' })[0];
+    let nodeOrigin = $('<div />', { "class": 'node-origin' })[0];
 
-    let rotateCW = document.createElement('div');
-    rotateCW.className = 'rotate-node-cw node-control';
-    $(rotateCW).on('mousedown touchstart',
-      () => _startRotation('cw'));
-    $(rotateCW).on('mouseup mouseout touchend',
-      () => _clearRotation());
-
-    let nodes = document.createElement('div');
-    nodes.className = 'nodes';
-
-    let nodeOrigin = document.createElement('div');
-    nodeOrigin.className = 'node-origin';
-
-    $(nodeControls).append(add);
-    $(nodeControls).append(subtract);
-    $(nodeControls).append(rotateCC);
-    $(nodeControls).append(rotateCW);
+    $(nodeControls).append(add, subtract, rotateCC, rotateCW);
     $(nodes).append(nodeOrigin);
-    $(cluster).append(nodeControls);
-    $(cluster).append(nodes);
-    $(cluster).hide();
+    $(cluster).append(nodeControls, nodes).hide();
     $('#new-cluster').before(cluster);
     $(cluster).fadeIn(250)
 
