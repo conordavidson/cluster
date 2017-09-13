@@ -28,17 +28,18 @@ function Cluster(){
     })
   }
 
-  this.rotateCC = function(){
-    rotation -= 1;
+  this.startClusterRotation = function(direction){
+    rotationTimer = direction === 'cc' ?
+      setInterval(() => this.rotateCluster('cc'), 7):
+      setInterval(() => this.rotateCluster('cw'), 7);
+  }
+
+  this.rotateCluster = function(direction){
+    direction === 'cc' ? rotation -= 1 : rotation += 1;
     domNodes.style.transform = 'rotate(' + rotation + 'deg)';
   }
 
-  this.rotateCW = function(){
-    rotation += 1;
-    domNodes.style.transform = 'rotate(' + rotation + 'deg)';
-  }
-
-  this.clearRotate = function(){
+  this.clearClusterRotation = function(){
     clearInterval(rotationTimer);
   }
 
@@ -66,21 +67,17 @@ function Cluster(){
 
     let rotateCC = document.createElement('div');
     rotateCC.className = 'rotate-node-cc node-control';
-    rotateCC.onmousedown = () => {
-      this.rotateCC();
-      rotationTimer = setInterval(this.rotateCC, 7);
-    }
-    rotateCC.onmouseup = () => this.clearRotate();
-    rotateCC.onmouseout = () => this.clearRotate();
+    $(rotateCC).on('mousedown touchstart',
+      () => this.startClusterRotation('cc'));
+    $(rotateCC).on('mouseup mouseout touchend',
+      () => this.clearClusterRotation());
 
     let rotateCW = document.createElement('div');
     rotateCW.className = 'rotate-node-cw node-control';
-    rotateCW.onmousedown = () => {
-      this.rotateCW();
-      rotationTimer = setInterval(this.rotateCW, 7);
-    }
-    rotateCW.onmouseup = () => this.clearRotate();
-    rotateCW.onmouseout = () => this.clearRotate();
+    $(rotateCW).on('mousedown touchstart',
+      () => this.startClusterRotation('cw'));
+    $(rotateCW).on('mouseup mouseout touchend',
+      () => this.clearClusterRotation());
 
     let nodes = document.createElement('div');
     nodes.className = 'nodes';
@@ -104,10 +101,8 @@ function Cluster(){
     domNodes = nodes;
 
     this.scale();
+    window.addEventListener("resize", this.scale);
 
-    $(window).on("resize", () => {
-      this.scale();
-    });
   })();
 }
 
@@ -152,7 +147,6 @@ function Node(parent, index){
 }
 
 // EVENT HANDLERS
-
-$("._generateNewCluster").on("click", () => {
+document.querySelector("._generateNewCluster").onclick = () => {
   new Cluster();
-});
+};
