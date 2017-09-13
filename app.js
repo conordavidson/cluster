@@ -1,4 +1,4 @@
-// OBJECTS
+// CLASSES
 function Cluster(){
   let dom;
   let domNodes;
@@ -7,50 +7,49 @@ function Cluster(){
   let rotation = 0;
   let rotationTimer;
 
-  this.addNode = function(){
+  let _addNode = () => {
     let index = nodes.length;
-    let newNode = new Node(domNodeOrigin, index);
+    let newNode = new Node(domNodeOrigin, index + 1);
     nodes.push(newNode);
-    this.balanceNodes();
+    _balanceNodes();
   }
 
-  this.subtractNode = function(){
-    if (nodes[nodes.length - 1]){
-      $(nodes[nodes.length - 1].getDom()).remove();
+  let _subtractNode = () => {
+    if (nodes.length){
+      nodes[nodes.length - 1].delete();
+      nodes.pop();
+      _balanceNodes();
     }
-    nodes.pop();
-    this.balanceNodes();
   }
 
-  this.balanceNodes = function(){
+  let _balanceNodes = () => {
     nodes.map((node, index) => {
-      node.rotate((360 / nodes.length) * (index));
+      node.revolve((360 / nodes.length) * (index));
     })
   }
 
-  this.startClusterRotation = function(direction){
+  let _startRotation = direction => {
     rotationTimer = direction === 'cc' ?
-      setInterval(() => this.rotateCluster('cc'), 7):
-      setInterval(() => this.rotateCluster('cw'), 7);
+      setInterval(() => _rotate('cc'), 7):
+      setInterval(() => _rotate('cw'), 7);
   }
 
-  this.rotateCluster = function(direction){
+  let _rotate = direction => {
     direction === 'cc' ? rotation -= 1 : rotation += 1;
     domNodes.style.transform = 'rotate(' + rotation + 'deg)';
   }
 
-  this.clearClusterRotation = function(){
+  let _clearRotation = () => {
     clearInterval(rotationTimer);
   }
 
-  this.scale = function(){
+  let _scale = () => {
     let width = dom.offsetWidth;
     dom.style.height = width + 'px';
     domNodeOrigin.style.transformOrigin = '25px ' + ((width / 2) + 25).toString() + 'px';
   }
 
-  let initialize = (() => {
-
+  let _INITIALIZE = (() => {
     let cluster = document.createElement('section');
     cluster.className = 'cluster';
 
@@ -59,25 +58,25 @@ function Cluster(){
 
     let add = document.createElement('div');
     add.className = 'add-node node-control';
-    add.onclick = () => this.addNode();
+    add.onclick = () => _addNode();
 
     let subtract = document.createElement('div');
     subtract.className = 'subtract-node node-control';
-    subtract.onclick = () => this.subtractNode();
+    subtract.onclick = () => _subtractNode();
 
     let rotateCC = document.createElement('div');
     rotateCC.className = 'rotate-node-cc node-control';
     $(rotateCC).on('mousedown touchstart',
-      () => this.startClusterRotation('cc'));
+      () => _startRotation('cc'));
     $(rotateCC).on('mouseup mouseout touchend',
-      () => this.clearClusterRotation());
+      () => _clearRotation());
 
     let rotateCW = document.createElement('div');
     rotateCW.className = 'rotate-node-cw node-control';
     $(rotateCW).on('mousedown touchstart',
-      () => this.startClusterRotation('cw'));
+      () => _startRotation('cw'));
     $(rotateCW).on('mouseup mouseout touchend',
-      () => this.clearClusterRotation());
+      () => _clearRotation());
 
     let nodes = document.createElement('div');
     nodes.className = 'nodes';
@@ -100,23 +99,26 @@ function Cluster(){
     domNodeOrigin = nodeOrigin;
     domNodes = nodes;
 
-    this.scale();
-    window.addEventListener("resize", this.scale);
-
+    _scale();
+    window.addEventListener("resize", _scale);
   })();
 }
 
 
-function Node(parent, index){
+function Node(parent, label){
   let dom;
   let rotation = 0;
 
-  this.rotate = function(degrees){
+  this.revolve = degrees => {
     rotation = degrees;
     dom.style.transform = 'rotate(' + rotation + 'deg)';
   }
 
-  this.setColor = () => {
+  this.delete = () => {
+    dom.remove();
+  }
+
+  let _setColor = () => {
     let chars = '0123456789ABCDEF';
     let hex = '#';
     for (let i = 0; i < 6; i++) {
@@ -125,28 +127,24 @@ function Node(parent, index){
     return hex;
   }
 
-  this.getDom = () => {
-    return dom;
-  }
-
-  let initialize = (() => {
+  let _INITIALIZE = (() => {
     let node = document.createElement('div');
-    node.id = index;
     node.className = 'node';
-    node.style.backgroundColor = this.setColor();
+    node.style.backgroundColor = _setColor();
 
-    let label = document.createElement('div');
-    label.className = 'label';
-    label.innerHTML = index + 1;
+    let nodeLabel = document.createElement('div');
+    nodeLabel.className = 'label';
+    nodeLabel.innerHTML = label;
 
-    $(node).append(label);
+    $(node).append(nodeLabel);
     $(parent).append(node);
 
     dom = node;
   })();
 }
 
-// EVENT HANDLERS
+
+// EVENT LISTENERS
 document.querySelector("._generateNewCluster").onclick = () => {
   new Cluster();
 };
