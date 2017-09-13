@@ -23,42 +23,59 @@ main {
   height: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 100px 60px 60px 60px;
+  padding: 20px 0;
+  font-size: 0;
 }
 
-.panel {
-  box-shadow: 0 6px 8px rgba(102,119,136,0.03), 0 1px 2px rgba(102,119,136,0.3);
-  background-color: white;
-  border-radius: 2px;
-  line-height: 30px;
-  padding: 5px;
-}
-
-.panel-heading, .panel-content, .panel-content * {
+section {
+  width: calc(50% - 80px);
   display: inline-block;
   vertical-align: middle;
+  margin: 40px;
 }
 
-.panel-heading {
-  border-right: 1px solid grey;
-  padding: 0 10px;
-  font-weight: 700;
+#new-cluster {
+  text-align: center;
 }
 
-.panel-content li{
-  border-right: 1px solid grey;
-  padding: 0 10px;
+#new-cluster button {
+  width: 100px;
+  height: 100px;
+  background-color: rgba(255,255,255,1);
+  font-size: 13px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.125s ease-in-out;
+  box-shadow:
+    inset 0 0 0 rgba(0,0,0,0.12),
+    inset 0 0 0 rgba(0,0,0,0.24),
+    0 6px 8px rgba(102,119,136,0.03),
+    0 1px 2px rgba(102,119,136,0.3);
+  padding: 2px 6px 3px;
+  border-width: 0;
+  border-style: none;
+  border-color: none;
+  border-image: none;
 }
 
-#controls {
-  position: fixed;
-  width: 100%;
-  z-index: 100;
+#new-cluster button:active{
+  box-shadow:
+    inset 0 1px 3px rgba(0,0,0,0.12),
+    inset 0 1px 2px rgba(0,0,0,0.24),
+    0 0px 0px rgba(102,119,136,0.03),
+    0 0px 0px rgba(102,119,136,0.3);
 }
 
-#cluster {
+#new-cluster button:hover {
+  background-color: rgba(255,255,255,0.7);
+}
+
+#new-cluster button:focus{
+  outline: none;
+}
+
+.cluster {
   position: relative;
-  height: 100%;
   border-radius: 50%;
   border: 1px dotted grey;
 }
@@ -68,31 +85,82 @@ main {
   height: 100%;
 }
 
-.central-node, .node {
-  border-radius: 50%;
-  box-shadow: 0 6px 8px rgba(102,119,136,0.03), 0 1px 2px rgba(102,119,136,0.3);
+.node-controls, .node {
   position: absolute;
 }
 
-.central-node {
-  background-color: white;
+.node-controls {
   width: 100px;
   height: 100px;
   top: calc(50% - 50px);
   left: calc(50% - 50px);
+  z-index: 100;
+}
+
+.node-control {
+  display: inline-block;
+  height: 50%;
+  width: 50%;
+  text-align: center;
+  line-height: 50px;
+  font-size: 20px;
+  background-color: rgba(255,255,255,1);
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.125s ease-in-out;
+  box-shadow:
+    inset 0 0 0 rgba(0,0,0,0.12),
+    inset 0 0 0 rgba(0,0,0,0.24),
+    0 6px 8px rgba(102,119,136,0.03),
+    0 1px 2px rgba(102,119,136,0.3);
+}
+
+.node-control:active{
+  box-shadow:
+    inset 0 1px 3px rgba(0,0,0,0.12),
+    inset 0 1px 2px rgba(0,0,0,0.24),
+    0 0px 0px rgba(102,119,136,0.03),
+    0 0px 0px rgba(102,119,136,0.3);
+}
+
+.node-control:hover {
+  background-color: rgba(255,255,255,0.7);
+}
+
+.node-control:first-child{
+  border-right: 1px solid #f1f1f1;
+}
+
+.add-node:before {
+  content: "+";
+}
+
+.subtract-node:before {
+  content: "-";
+}
+
+.rotate-node-cc:before {
+  content: "<";
+}
+
+.rotate-node-cw:before {
+  content: ">";
 }
 
 .node {
   width: 50px;
   height: 50px;
+  border-radius: 50%;
   top: calc(0% - 25px);
   left: calc(50% - 25px);
   transform-origin: inherit;
   text-align: center;
+  box-shadow: 0 6px 8px rgba(102,119,136,0.03), 0 1px 2px rgba(102,119,136,0.3);
 }
 
 .node .label {
   position: relative;
   top: 50%;
   transform: translateY(-50%);
+  font-size: 13px;
 }

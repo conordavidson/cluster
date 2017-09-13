@@ -1,14 +1,24 @@
 // OBJECTS
-function Cluster(id){
+function Cluster(){
   let dom;
   let domNodes;
+  let domNodeOrigin;
   let nodes = [];
   let rotation = 0;
+  let rotationTimer;
 
   this.addNode = function(){
     let index = nodes.length;
-    let newNode = new Node(domNodes, index);
+    let newNode = new Node(domNodeOrigin, index);
     nodes.push(newNode);
+    this.balanceNodes();
+  }
+
+  this.subtractNode = function(){
+    if (nodes[nodes.length - 1]){
+      $(nodes[nodes.length - 1].getDom()).remove();
+    }
+    nodes.pop();
     this.balanceNodes();
   }
 
@@ -18,35 +28,86 @@ function Cluster(id){
     })
   }
 
-  this.rotate = function(degrees){
-    rotation = degrees;
-    dom.style.transform = 'rotate(' + rotation + 'deg)';
+  this.rotateCC = function(){
+    rotation -= 1;
+    domNodes.style.transform = 'rotate(' + rotation + 'deg)';
+  }
+
+  this.rotateCW = function(){
+    rotation += 1;
+    domNodes.style.transform = 'rotate(' + rotation + 'deg)';
+  }
+
+  this.clearRotate = function(){
+    clearInterval(rotationTimer);
   }
 
   this.scale = function(){
-    let height = dom.offsetHeight;
-    dom.style.width = height + 'px';
-    domNodes.style.transformOrigin = '25px ' + ((height / 2) + 25).toString() + 'px';
+    let width = dom.offsetWidth;
+    dom.style.height = width + 'px';
+    domNodeOrigin.style.transformOrigin = '25px ' + ((width / 2) + 25).toString() + 'px';
   }
 
   let initialize = (() => {
-    let cluster = document.createElement('div');
-    cluster.id = id;
 
-    let centralNode = document.createElement('div');
-    centralNode.className = 'central-node';
+    let cluster = document.createElement('section');
+    cluster.className = 'cluster';
+
+    let nodeControls = document.createElement('div');
+    nodeControls.className = 'node-controls';
+
+    let add = document.createElement('div');
+    add.className = 'add-node node-control';
+    add.onclick = () => this.addNode();
+
+    let subtract = document.createElement('div');
+    subtract.className = 'subtract-node node-control';
+    subtract.onclick = () => this.subtractNode();
+
+    let rotateCC = document.createElement('div');
+    rotateCC.className = 'rotate-node-cc node-control';
+    rotateCC.onmousedown = () => {
+      this.rotateCC();
+      rotationTimer = setInterval(this.rotateCC, 7);
+    }
+    rotateCC.onmouseup = () => this.clearRotate();
+    rotateCC.onmouseout = () => this.clearRotate();
+
+    let rotateCW = document.createElement('div');
+    rotateCW.className = 'rotate-node-cw node-control';
+    rotateCW.onmousedown = () => {
+      this.rotateCW();
+      rotationTimer = setInterval(this.rotateCW, 7);
+    }
+    rotateCW.onmouseup = () => this.clearRotate();
+    rotateCW.onmouseout = () => this.clearRotate();
 
     let nodes = document.createElement('div');
     nodes.className = 'nodes';
 
-    $(cluster).append(centralNode);
+    let nodeOrigin = document.createElement('div');
+    nodeOrigin.className = 'node-origin';
+
+    $(nodeControls).append(add);
+    $(nodeControls).append(subtract);
+    $(nodeControls).append(rotateCC);
+    $(nodeControls).append(rotateCW);
+    $(nodes).append(nodeOrigin);
+    $(cluster).append(nodeControls);
     $(cluster).append(nodes);
-    $('main').append(cluster);
+    $(cluster).hide();
+    $('#new-cluster').before(cluster);
+    $(cluster).fadeIn(250)
 
     dom = cluster;
+    domNodeOrigin = nodeOrigin;
     domNodes = nodes;
 
     this.scale();
+
+    $(window).on("resize", () => {
+      this.scale();
+    });
   })();
 }
 
@@ -61,12 +122,16 @@ function Node(parent, index){
   }
 
   this.setColor = () => {
-    let letters = '0123456789ABCDEF';
-    let color = '#';
+    let chars = '0123456789ABCDEF';
+    let hex = '#';
     for (let i = 0; i < 6; i++) {
-      color += letters[Math.floor(Math.random() * 16)];
+      hex += chars[Math.floor(Math.random() * 16)];
     }
-    return color;
+    return hex;
+  }
+
+  this.getDom = () => {
+    return dom;
   }
 
   let initialize = (() => {
@@ -86,23 +151,8 @@ function Node(parent, index){
   })();
 }
 
-
-
-// CONSTRUCTORS
-
-let cluster = new Cluster('cluster');
-
-
-
 // EVENT HANDLERS
-$("._generateNode").on("click", () => {
-  cluster.addNode();
-})
 
-$("._rotateCluster").on("input", () => {
-  cluster.rotate(event.currentTarget.value)
-})
-
-$(window).on("resize", () => {
-  cluster.scale();
-})
+$("._generateNewCluster").on("click", () => {
+  new Cluster();
+});
