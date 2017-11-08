@@ -161,6 +161,7 @@ section {
   transform-origin: inherit;
   text-align: center;
   box-shadow: 0 6px 8px rgba(102,119,136,0.03), 0 1px 2px rgba(102,119,136,0.3);
+  transition: transform 0.25s ease-in-out;
 }
 
 .node .label {
